@@ -73,10 +73,39 @@ class S8BL_LibraryEntry_Flags:
         self.needs_vdp1 = None
         self.translation = None
         self.bios = None
-        self.hack = None
+        self.hacks = None
         self.homebrew = None
         self.is_3d = None
         self.sprite_flicker = None  # ???
+
+    def parse_meka(self, instr: str):
+        istr = instr
+        if 'BAD' in istr:
+            self.bad = True
+            istr = istr.replace('BAD', '')
+        if 'HOMEBREW' in istr:
+            self.homebrew = True
+            istr = istr.replace('HOMEBREW', '')
+        if 'PROTO' in istr:
+            self.prototype = True
+            istr = istr.replace('PROTO', '')
+        if 'BIOS' in istr:
+            self.bios = True
+            istr = istr.replace('BIOS', '')
+        if 'HACKS' in istr:
+            self.hacks = True
+            istr = istr.replace('HACKS', '')
+        if 'HACK' in istr:
+            self.hacks = True
+            istr = istr.replace('HACK', '')
+        if 'TRANS' in istr:
+            self.translation = True
+            istr = istr.replace('TRANS', '')
+        if 'SMSGG_MODE' in istr:
+            self.gg_sms_mode = True
+            istr = istr.replace('SMSGG_MODE', '')
+        if len(istr.replace(',', '')) > 1:
+            print('MISSING FIELDS', istr, instr)
 
     def toSaveObject(self):
         o = []
@@ -86,7 +115,7 @@ class S8BL_LibraryEntry_Flags:
         if self.needs_vdp1 is not None: o.append('needs_vdp1')
         if self.translation is not None: o.append('translation')
         if self.bios is not None: o.append('bios')
-        if self.hack is not None: o.append('hack')
+        if self.hack is not None: o.append('hacks')
         if self.homebrew is not None: o.append('homebrew')
         if self.is_3d is not None: o.append('is_3d')
         if self.sprite_flicker is not None: o.append('sprite_flicker')
@@ -111,6 +140,11 @@ class S8BL_LibraryEntry:
         self.identifier: Optional[str] = None  #
         self.translation: Optional[str] = None  #
         self.date: Optional[str] = None  #
+        self.misc: Optional[dict] = None
+        self.alt_names: Optional[List[str]] = None
+        self.requires_ntsc: Optional[bool] = None
+        self.requires_pal: Optional[bool] = None
+        self.inputs: Optional[List[str]] = None
         self.flags: S8BL_LibraryEntry_Flags = S8BL_LibraryEntry_Flags()
 
     def toSaveObject(self):
@@ -134,7 +168,12 @@ class S8BL_LibraryEntry:
         ainn(o, 'countries')
         ainn(o, 'intentifier')
         ainn(o, 'translation')
+        ainn(o, 'misc')
         ainn(o, 'date')
+        ainn(o, 'alt_names')
+        ainn(o, 'requires_ntsc')
+        ainn(o, 'requires_pal')
+        ainn(o, 'inputs')
 
     def fromPyObjectTotal(self, what):
         self.names = what['names']
