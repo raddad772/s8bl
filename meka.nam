@@ -1,26 +1,3 @@
-#define MAPPER_Auto                             (-1)
-#define MAPPER_Standard                         (0)         // Standard Sega mapper.
-#define MAPPER_32kRAM                           (1)
-#define MAPPER_ColecoVision                     (2)
-#define MAPPER_CodeMasters                      (3)
-#define MAPPER_93c46                            (4)
-#define MAPPER_SG1000                           (5)         // FIXME: Emulating 4KB RAM when it should be 2KB !#@?
-#define MAPPER_SMS_ActionReplay                 (6)
-#define MAPPER_TVOekaki                         (7)
-#define MAPPER_SF7000                           (8)
-#define MAPPER_SMS_Korean_A000                  (9)         // Register at 0xA000.
-#define MAPPER_SMS_DisplayUnit                  (10)
-#define MAPPER_SMS_NoMapper                     (11)        // 0x0000->0xBFFF map to ROM. No mapper register.
-#define MAPPER_SMS_Korean_MSX_8KB_0003          (12)        // 8KB bank-switching (4 banks)
-#define MAPPER_SMS_Korean_Janggun               (13)        // 8KB bank-switching (4 banks) mixed with 16KB bank-switching
-#define MAPPER_SMS_4PakAllAction                (14)
-#define MAPPER_SG1000_Taiwan_MSX_Adapter_TypeA  (15)        // 8KB RAM from 0x2000->0x3FFF + regular 2KB ram in 0xC000-0xFFFF range
-#define MAPPER_SMS_Korean_FFFF_HiCom            (16)        // Register at 0xFFFF to map 32 KB at 0x0000->0x8000
-#define MAPPER_SC3000_Survivors_Multicart       (17)
-#define MAPPER_SMS_Korean_MSX_8KB_0300          (18)        // Registers at 0x0000,0x0100,0x0200,0x0300 (Super Multi Game Super 75 in 1, Super Game World 75 etc.)
-#define MAPPER_SMS_Korean_2000_xor_1F           (19)        // Register at 0x2000 (128 Hap, Game Mo-eumjip 188 Hap etc.)
-#define MAPPER_SMS_Korean_BFFC                  (20)        // Register at 0xBFFC
-
 ;-----------------------------------------------------------------------------
 ; MEKA - Software Database
 ; Last updated 2022/03/27
@@ -747,7 +724,7 @@ SMS 3e1387f6 5817A60154C0D7FF   X-Men: Mojo World/COUNTRY=BR/PRODUCT_NO=028740/C
 SMS 565c799f 3E57DDC184F4D481   Xyzolog/COUNTRY=KR/PRODUCT_NO=G-91
 SMS 32759751 13C43FBEE6B25341   Ys/COUNTRY=JP/PRODUCT_NO=G-1370/EMU_VDP=315-5124/COMMENT=Japanese version of "Y's: The Vanished Omens".
 SMS b33e2827 6C4C3C65EF39ADD2   Y's: The Vanished Omens/NAME_BR=Y's/COUNTRY=US,EU,BR/PRODUCT_NO=7501/COMMENT=Export version of "Ys".
-SMS e8b82066 06806D7C60FB9C9A   Y's: The Vanished Omens [Demo]/COUNTRY=US/FLAGS=PROTO//EMU_VDP=315-5124/COMMENT=Rolling non-interactive demo to advertise the game. Text in Japanese although this is an US demo cartridge.
+SMS e8b82066 06806D7C60FB9C9A   Y's: The Vanished Omens [Demo]/COUNTRY=US/FLAGS=PROTO/EMU_VDP=315-5124/COMMENT=Rolling non-interactive demo to advertise the game. Text in Japanese although this is an US demo cartridge.
 SMS a3ef13cb 73E4CCD0CC1A69BE   Zaxxon 3-D/NAME_JP=Zaxxon 3D/COUNTRY=JP,US,EU,BR/EMU_3D/PRODUCT_NO=G-1336,8002/COMMENT=The 3-D effect can be removed by pressing Pause on title screen. It works only on non-Japanese systems.
 SMS bba74147 2D689EA985B828BF   Zaxxon 3-D [Proto]/NAME_JP=Zaxxon 3D/FLAGS=PROTO/EMU_3D/COMMENT=Unfinished prototype version of the game.
 SMS 60c19645 39A919D7DA6933B8   Zillion [v0]/NAME_JP=Akai Koudan Zillion/COUNTRY=JP,EU/PRODUCT_NO=G-1325,5075
@@ -1507,7 +1484,7 @@ SG1 b377d6e1 1A853CAEBF1FE1B8   N-Sub [40k map]/COUNTRY=JP/PRODUCT_NO=G-1003
 SG1 09196fc5 5CACF5534AD6DCB4   N-Sub [1988]/COUNTRY=EU/PRODUCT_NO=G-1003/COMMENT=This version has the date modified to 1988. The exact origin of this modification is unknown.
 SG1 ffc4ee3f 08273161CCB87E3D   Magical Kid Wiz/COUNTRY=TW/PRODUCT_NO=Y-115/EMU_MAPPER=11
 SG1 b3a8291a F64058B36B48B755   Magical Tree/COUNTRY=TW/PRODUCT_NO=R-102
-SG1 1c137cab A2DA2FADF50BA404   Mahjong [big 1983]/COUNTRY=JP/PRODUCT_NO=G-1004//COMMENT=Title screen with big "1983" version. Also referred to as "Sega Mahjong" on title screen.
+SG1 1c137cab A2DA2FADF50BA404   Mahjong [big 1983]/COUNTRY=JP/PRODUCT_NO=G-1004/COMMENT=Title screen with big "1983" version. Also referred to as "Sega Mahjong" on title screen.
 SG1 6d909857 254B7166E51F15A0   Mahjong [small 1983]/COUNTRY=JP/PRODUCT_NO=G-1004/COMMENT=Title screen with small "1983" version. Also referred to as "Sega Mahjong" on title screen.
 SG1 bc823a89 133E6158D913C743   Mahjong/COUNTRY=TW/PRODUCT_NO=B-004
 SG1 8572d73a 81E3163950C1F745   Monaco GP [24k] [v0] [40k map]/COUNTRY=JP,NZ,AU/PRODUCT_NO=G-1017/COMMENT=The 24KB ROM version of the game include a simplified title screen logo in text form. File size is 40KB because of the memory mapping arrangement, but only 24 KB are valid data.  ; [EDITOR NOTE] Unsure which country has which version exactly.
