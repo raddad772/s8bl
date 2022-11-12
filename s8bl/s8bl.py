@@ -131,7 +131,7 @@ class S8BL_LibraryEntry:
         self.system: Optional[int] = None  #
         self.ROM_size: Optional[int] = None  #
         self.RAM_size: Optional[int] = None  #
-        self.comment: Optional[str] = None  #
+        self.comments: Optional[List[str]] = None  #
 
         self.flags: Optional[List[str]] = None  #
         self.product_number: Optional[str] = None  #

@@ -28,6 +28,40 @@ MEKA_MAPPER_TO_OURS = {
     20: S8BL_Mapper['sms_korean_BFFC']
 }
 
+def parse_old_fields(entry: S8BL_LibraryEntry, fields: List[str]):
+    for field in fields:
+        if field == 'BAD':
+            entry.flags.bad = True
+        elif field == 'HACK':
+            entry.flags.hacks = True
+        elif field[:8] == 'AUTHORS=':
+            if entry.misc is None:
+                entry.misc = {}
+            entry.misc['authors'] = field[8:]
+        elif field[:8] == 'COMMENT=':
+            entry.comments = [field[8:]]
+        elif field[:6] == 'TRANS=':
+            entry.translation = field[6:]
+        elif field[:4] == 'VER=':
+            entry.version = field[4:]
+        elif field == 'PROTO':
+            entry.flags.prototype = True
+        elif field == 'TVTYPE=PAL/SECAM':
+            entry.requires_pal = True
+        elif 'ID=' in field:
+            entry.identifier = field[3:]
+        elif 'DATE=' in field:
+            entry.date = field[:5]
+        elif 'JAPNAME=' in field:
+            if entry.alt_names is None:
+                entry.alt_names = []
+            entry.alt_names.append(field[8:])
+        elif 'Mapper=' in field or 'MAPPER=' in field:
+            entry.mapper = MEKA_MAPPER_TO_OURS[int(field[7:])]
+        elif field == 'FLICKER':
+            entry.flags.sprite_flicker = True
+        else:
+            print('UNKNOWN FIELD?', field)
 
 def parse_new_fields(entry: S8BL_LibraryEntry, fields: List[str]):
     for field in fields:
@@ -44,7 +78,7 @@ def parse_new_fields(entry: S8BL_LibraryEntry, fields: List[str]):
         elif field[:11] == 'PRODUCT_NO=':
             entry.product_number = field[11:]
         elif field[:8] == 'COMMENT=':
-            entry.comment = field[8:]
+            entry.comments = [field[8:]]
         elif field[:8] == 'VERSION=':
             entry.version = field[8:]
         elif field[:6] == 'FLAGS=':
@@ -117,6 +151,16 @@ def parse_new(lib: S8BL_Library, kind: int, line: str):
 
 
 def parse_old(lib: S8BL_Library, line: str):
+    entry = S8BL_LibraryEntry()
+    entry.MekaCRC = line[:16]
+    rol = line[18:]
+    rol = rol.replace('\\,', '|')
+    fields = rol.split(',')
+    for i in range(0, len(fields)):
+        fields[i] = fields[i].replace('|', ',')
+    entry.names = [fields[0]]
+    if len(fields) > 1:
+        parse_old_fields(entry, fields[1:])
     pass
 
 
@@ -147,7 +191,6 @@ def main():
             kind = S8BL_System['sms']
         elif line[:3] == 'SF7':
             kind = S8BL_System['sf7000']
-
         if kind is not None:
             parse_new(lib, kind, line)
         else:
