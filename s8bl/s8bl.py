@@ -10,7 +10,8 @@ S8BL_System = {
     'gg': 3,  # Sega GameGear
     'sc3000': 4,  # Sega Computer 3000
     'omv': 5,  # Othello Multi-Vision
-    'sf7000': 6  # Sega Super Control Station 7000
+    'sf7000': 6,  # Sega Super Control Station 7000
+    'colecovision': 7
 }
 S8BL_Systems_R = {v: k for k, v in S8BL_System.items()}
 S8BL_Mapper = {
@@ -18,8 +19,8 @@ S8BL_Mapper = {
     'sega': 1,
     'sega_32k_RAM': 2,
     'codemasters': 3,
-    'dahjee_a': 4,
-    'dahjee_b': 5,
+    'dahjee_a': 4,  # AKA 'SG1000_Taiwan_MSX_TypeA': 19, # AKA Dahjee A
+    'dahjee_b': 5,  # AKA NoMapper for Meka!?!?!
     'unique_castle': 6,
     'unique_othello': 7,
     'colecovision': 8,
@@ -27,11 +28,17 @@ S8BL_Mapper = {
     'sg1000': 10,
     'sms_actionreplay': 11,
     'tv_oekaki': 12,
-    'sfc7000': 13,
+    'sf7000': 13,
     'korean_a000': 14,
     'sms_display_unit': 15,
-    'sms_no_mapper': 16,
-    
+    'korean_msx_8kb_0003': 17,
+    'sms_4PakAllAction': 18,
+    'sms_korean_FFFF_HiCom': 19,
+    'sc3000_survivors_multicart': 20,
+    'sms_korean_MSX_8KB_0300': 21,
+    'sms_korean_2000_XOR_1F': 22,
+    'sms_korean_BFFC': 23,
+    'sms_korean_janggun': 24
 }
 S8BL_Mappers_R = {v: k for k, v in S8BL_Mapper.items()}
 
@@ -88,30 +95,46 @@ class S8BL_LibraryEntry_Flags:
 
 class S8BL_LibraryEntry:
     def __init__(self):
-        self.names: List[str] = []
-        self.CRC32: int = 0
-        self.MekaCRC: Optional[str] = None
-        self.mapper: Optional[int] = None
-        self.system: Optional[int] = None
-        self.ROM_size: Optional[int] = None
-        self.RAM_size: Optional[int] = None
-        self.comment: Optional[str] = None
+        self.names: List[str] = []   #
+        self.CRC32: int = 0         #
+        self.MekaCRC: Optional[str] = None  #
+        self.mapper: Optional[int] = None  #
+        self.system: Optional[int] = None  #
+        self.ROM_size: Optional[int] = None  #
+        self.RAM_size: Optional[int] = None  #
+        self.comment: Optional[str] = None  #
 
-        self.flags: Optional[List[str]] = None
-        self.product_number: Optional[str] = None
-        self.countries: Optional[List[str]] = None
-        self.identifier: Optional[str] = None
-        self.translation: Optional[str] = None
-        self.Date: Optional[str] = None
+        self.flags: Optional[List[str]] = None  #
+        self.product_number: Optional[str] = None  #
+        self.version: Optional[str] = None  #
+        self.countries: Optional[List[str]] = None  #
+        self.identifier: Optional[str] = None  #
+        self.translation: Optional[str] = None  #
+        self.date: Optional[str] = None  #
         self.flags: S8BL_LibraryEntry_Flags = S8BL_LibraryEntry_Flags()
 
     def toSaveObject(self):
+        def ainn(obj, what):
+            r = getattr(self, what)
+            if r is not None:
+                obj[what] = r
+
         o = {'names': self.names,
              'CRC32': self.CRC32,
              'mapper': self.mapper,
              'system': self.system,
              'flags': self.flags.toSaveObject()
              }
+        ainn(o, 'product_number')
+        ainn(o, 'MekaCRC')
+        ainn(o, 'ROM_size')
+        ainn(o, 'RAM_size')
+        ainn(o, 'comment')
+        ainn(o, 'version')
+        ainn(o, 'countries')
+        ainn(o, 'intentifier')
+        ainn(o, 'translation')
+        ainn(o, 'date')
 
     def fromPyObjectTotal(self, what):
         self.names = what['names']

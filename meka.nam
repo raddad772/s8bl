@@ -1,3 +1,26 @@
+#define MAPPER_Auto                             (-1)
+#define MAPPER_Standard                         (0)         // Standard Sega mapper.
+#define MAPPER_32kRAM                           (1)
+#define MAPPER_ColecoVision                     (2)
+#define MAPPER_CodeMasters                      (3)
+#define MAPPER_93c46                            (4)
+#define MAPPER_SG1000                           (5)         // FIXME: Emulating 4KB RAM when it should be 2KB !#@?
+#define MAPPER_SMS_ActionReplay                 (6)
+#define MAPPER_TVOekaki                         (7)
+#define MAPPER_SF7000                           (8)
+#define MAPPER_SMS_Korean_A000                  (9)         // Register at 0xA000.
+#define MAPPER_SMS_DisplayUnit                  (10)
+#define MAPPER_SMS_NoMapper                     (11)        // 0x0000->0xBFFF map to ROM. No mapper register.
+#define MAPPER_SMS_Korean_MSX_8KB_0003          (12)        // 8KB bank-switching (4 banks)
+#define MAPPER_SMS_Korean_Janggun               (13)        // 8KB bank-switching (4 banks) mixed with 16KB bank-switching
+#define MAPPER_SMS_4PakAllAction                (14)
+#define MAPPER_SG1000_Taiwan_MSX_Adapter_TypeA  (15)        // 8KB RAM from 0x2000->0x3FFF + regular 2KB ram in 0xC000-0xFFFF range
+#define MAPPER_SMS_Korean_FFFF_HiCom            (16)        // Register at 0xFFFF to map 32 KB at 0x0000->0x8000
+#define MAPPER_SC3000_Survivors_Multicart       (17)
+#define MAPPER_SMS_Korean_MSX_8KB_0300          (18)        // Registers at 0x0000,0x0100,0x0200,0x0300 (Super Multi Game Super 75 in 1, Super Game World 75 etc.)
+#define MAPPER_SMS_Korean_2000_xor_1F           (19)        // Register at 0x2000 (128 Hap, Game Mo-eumjip 188 Hap etc.)
+#define MAPPER_SMS_Korean_BFFC                  (20)        // Register at 0xBFFC
+
 ;-----------------------------------------------------------------------------
 ; MEKA - Software Database
 ; Last updated 2022/03/27

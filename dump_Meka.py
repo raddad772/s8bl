@@ -6,7 +6,26 @@ from s8bl.s8bl import S8BL_LibraryEntry, S8BL_Library, S8BL_System, S8BL_Mapper
 
 MEKA_MAPPER_TO_OURS = {
     0: S8BL_Mapper['sega'],
-
+    1: S8BL_Mapper['sega_32k_RAM'],
+    2: S8BL_Mapper['colecovision'],
+    3: S8BL_Mapper['codemasters'],
+    4: S8BL_Mapper['93c46'],
+    5: S8BL_Mapper['sg1000'],
+    6: S8BL_Mapper['sms_actionreplay'],
+    7: S8BL_Mapper['tv_oekaki'],
+    8: S8BL_Mapper['sf7000'],
+    9: S8BL_Mapper['korean_a000'],
+    10: S8BL_Mapper['sms_display_unit'],
+    11: S8BL_Mapper['dahjee_b'],
+    12: S8BL_Mapper['korean_msx_8kb_0003'],
+    13: S8BL_Mapper['sms_korean_janggun'],
+    14: S8BL_Mapper['sms_4PakAllAction'],
+    15: S8BL_Mapper['dahjee_a'],
+    16: S8BL_Mapper['sms_korean_FFFF_HiCom'],
+    17: S8BL_Mapper['sc3000_survivors_multicart'],
+    18: S8BL_Mapper['sms_korean_MSX_8KB_0300'],
+    19: S8BL_Mapper['sms_korean_2000_XOR_1F'],
+    20: S8BL_Mapper['sms_korean_BFFC']
 }
 
 
@@ -75,7 +94,6 @@ def main():
 
         if kind is not None:
             parse_new(lib, kind, line)
-            return
         else:
             parse_old(lib, line)
 
