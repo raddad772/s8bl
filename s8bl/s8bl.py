@@ -13,7 +13,7 @@ S8BL_System = {
     'sf7000': 6,  # Sega Super Control Station 7000
     'colecovision': 7
 }
-S8BL_Systems_R = {v: k for k, v in S8BL_System.items()}
+S8BL_System_R = {v: k for k, v in S8BL_System.items()}
 S8BL_Mapper = {
     'none': 0,
     'sega': 1,
@@ -40,7 +40,7 @@ S8BL_Mapper = {
     'sms_korean_BFFC': 23,
     'sms_korean_janggun': 24
 }
-S8BL_Mappers_R = {v: k for k, v in S8BL_Mapper.items()}
+S8BL_Mapper_R = {v: k for k, v in S8BL_Mapper.items()}
 
 S8BL_Country = {
     'US': 0,
@@ -77,6 +77,24 @@ class S8BL_LibraryEntry_Flags:
         self.homebrew = None
         self.is_3d = None
         self.sprite_flicker = None  # ???
+
+    def toPyDict(self):
+        return self.toSaveObject()
+
+    def merge(self, mfrom):
+        def dif(nm):
+            if getattr(mfrom, nm) is not None:
+                setattr(self, nm, getattr(mfrom, nm))
+        dif('bad')
+        dif('prototype')
+        dif('gg_sms_mode')
+        dif('needs_vdp1')
+        dif('translation')
+        dif('bios')
+        dif('hacks')
+        dif('homebrew')
+        dif('is_3d')
+        dif('sprite_flicker')
 
     def parse_meka(self, instr: str):
         istr = instr
@@ -115,7 +133,7 @@ class S8BL_LibraryEntry_Flags:
         if self.needs_vdp1 is not None: o.append('needs_vdp1')
         if self.translation is not None: o.append('translation')
         if self.bios is not None: o.append('bios')
-        if self.hack is not None: o.append('hacks')
+        if self.hacks is not None: o.append('hacks')
         if self.homebrew is not None: o.append('homebrew')
         if self.is_3d is not None: o.append('is_3d')
         if self.sprite_flicker is not None: o.append('sprite_flicker')
@@ -124,8 +142,8 @@ class S8BL_LibraryEntry_Flags:
 
 class S8BL_LibraryEntry:
     def __init__(self):
-        self.names: List[str] = []   #
-        self.CRC32: int = 0         #
+        self.names: List[str] = []  #
+        self.CRC32: int = 0  #
         self.MekaCRC: Optional[str] = None  #
         self.mapper: Optional[int] = None  #
         self.system: Optional[int] = None  #
@@ -146,6 +164,30 @@ class S8BL_LibraryEntry:
         self.requires_pal: Optional[bool] = None
         self.inputs: Optional[List[str]] = None
         self.flags: S8BL_LibraryEntry_Flags = S8BL_LibraryEntry_Flags()
+
+    def toPyDict(self):
+        o = {}
+        for member in self.members:
+            mm = getattr(self, member)
+            if member == 'flags':
+                o[member] = self.flags.toPyDict()
+                continue
+            if member == 'mapper':
+                if mm is None:
+                    mm = 0
+                o[member] = S8BL_Mapper_R[mm]
+                continue
+            if member == 'system':
+                if mm is None:
+                    mm = 0
+                o[member] = S8BL_System_R[mm]
+                continue
+            if getattr(self, member) is not None:
+                o[member] = getattr(self, member)
+        return o
+
+    def merge_flags(self, mfrom: S8BL_LibraryEntry_Flags):
+        self.flags.merge(mfrom)
 
     def toSaveObject(self):
         def ainn(obj, what):
@@ -174,6 +216,17 @@ class S8BL_LibraryEntry:
         ainn(o, 'requires_ntsc')
         ainn(o, 'requires_pal')
         ainn(o, 'inputs')
+
+    @property
+    def members(self) -> List[str]:
+        return [attr for attr in dir(self) if
+                attr != 'members' and not callable(getattr(self, attr)) and not attr.startswith("__")]
+
+    def replace(self, mwith: 'S8BL_LibraryEntry') -> None:
+        # Overwrite all our attributes
+        self.__init__()
+        for m in self.members:
+            setattr(self, m, getattr(mwith, m))
 
     def fromPyObjectTotal(self, what):
         self.names = what['names']
@@ -206,6 +259,69 @@ class S8BL_Library:
         obj.system = system
         self.db.append(obj)
 
+    def merge_in(self, to: S8BL_LibraryEntry) -> None:
+        found = None
+        # Deal with MekaCRC-only ones
+        if to.CRC32 == 0:
+            # print('WEIRD ENTRY', to.names)
+            for entry in self.db:
+                if (entry.MekaCRC is not None and entry.MekaCRC == to.MekaCRC) or (entry.names[0] == to.names[0]):
+                    entry.replace(to)
+                    return
+            self.db.append(to)
+            return
+
+        # Scan for CRC and update
+        if to.CRC32 in self.CRC_to_db:
+            entry = self.CRC_to_db[to.CRC32]
+            if entry.mapper != to.mapper:
+                if to.mapper == 2 and entry.mapper == 1:
+                    entry.mapper = 2
+                elif to.mapper == 0:
+                    entry.mapper = to.mapper
+                elif entry.mapper == 0:
+                    entry.mapper = to.mapper
+                elif entry.mapper == 1:
+                    entry.mapper = to.mapper
+                elif entry.mapper in [6, 7]:
+                    pass
+            for nm in to.names:
+                if nm not in entry.names:
+                    entry.names.append(nm)
+            members = entry.members
+            for member in members:
+                if member == 'names' or member == 'mapper':
+                    continue
+                entry_m = getattr(entry, member)
+                to_m = getattr(to, member)
+                if member == 'flags':
+                    entry.merge_flags(to.flags)
+                    continue
+                if to_m is None and entry_m is None:
+                    continue
+                if entry_m is None and to_m is not None:
+                    setattr(entry, member, to_m)
+                    continue
+                if entry_m == to_m:
+                    continue
+                if member == 'system' and entry_m == 2 and to_m == 4:
+                    setattr(entry, member, to_m)
+                    continue
+                if member == 'system' and entry_m == 1 and to_m != 1:
+                    continue
+                if entry_m == 2 and to_m == 1:
+                    setattr(entry, member, to_m)
+                    continue
+                if member == "ROM_size" or member == 'RAM_size':
+                    continue
+                if member == 'system' and entry_m == 3 and to_m == 2:
+                    continue
+                print('GOT HERE...', member, entry_m, to_m, entry.names)
+            return
+        # Replace!
+        self.CRC_to_db[to.CRC32] = to
+        self.db.append(to)
+
     def load(self, path: str) -> None:
         if not os.path.isfile(path):
             raise FileNotFoundError
@@ -225,13 +341,7 @@ class S8BL_Library:
     def toPyDict(self):
         out = []
         for item in self.db:
-            out.append({'names': [item.names],
-                        'CRC32': item.CRC32,
-                        'ROM_size': item.ROM_size,
-                        'RAM_size': item.RAM_size,
-                        'mapper': S8BL_Mappers_R[item.mapper],
-                        'system': S8BL_Systems_R[item.system]
-                        })
+            out.append(item.toPyDict())
         return out
 
     def save(self, path: str) -> None:
