@@ -28,6 +28,7 @@ MEKA_MAPPER_TO_OURS = {
     20: S8BL_Mapper['sms_korean_BFFC']
 }
 
+
 def parse_old_fields(entry: S8BL_LibraryEntry, fields: List[str]):
     for field in fields:
         if field == 'BAD':
@@ -62,6 +63,7 @@ def parse_old_fields(entry: S8BL_LibraryEntry, fields: List[str]):
             entry.flags.sprite_flicker = True
         else:
             print('UNKNOWN FIELD?', field)
+
 
 def parse_new_fields(entry: S8BL_LibraryEntry, fields: List[str]):
     for field in fields:
@@ -146,14 +148,16 @@ def parse_new(lib: S8BL_Library, kind: int, line: str):
     entry.MekaCRC = mekacrc
     entry.system = kind
     entry.names = [fields[0]]
+    entry.mapper = 0
     if len(fields) > 1:
         parse_new_fields(entry, fields[1:])
+    return entry
 
 
 def parse_old(lib: S8BL_Library, line: str):
     entry = S8BL_LibraryEntry()
     entry.MekaCRC = line[:16]
-    rol = line[18:]
+    rol = line[17:]
     rol = rol.replace('\\,', '|')
     fields = rol.split(',')
     for i in range(0, len(fields)):
@@ -161,7 +165,7 @@ def parse_old(lib: S8BL_Library, line: str):
     entry.names = [fields[0]]
     if len(fields) > 1:
         parse_old_fields(entry, fields[1:])
-    pass
+    return entry
 
 
 def main():
@@ -192,10 +196,11 @@ def main():
         elif line[:3] == 'SF7':
             kind = S8BL_System['sf7000']
         if kind is not None:
-            parse_new(lib, kind, line)
+            r = parse_new(lib, kind, line)
         else:
-            parse_old(lib, line)
-
+            r = parse_old(lib, line)
+        lib.merge_in(r)
+    lib.save('s8bl2_meka_totalsms.json')
         # print(line)
 
 
